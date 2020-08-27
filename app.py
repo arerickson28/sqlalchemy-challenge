@@ -35,6 +35,7 @@ def welcome() :
 
 @app.route("/api/v1.0/precipitation")
 def precipitation():
+
         session = Session(engine)
 
         last_year = dt.date(2017, 8, 23) - dt.timedelta(days = 365)
@@ -44,6 +45,7 @@ def precipitation():
         session.close()
         
         precipitation = []
+        
         for date, prcp in precip_results:
             precip_dict = {}
             precip_dict["date"] = date
@@ -55,6 +57,7 @@ def precipitation():
 
 @app.route("/api/v1.0/stations")
 def stations():
+
     session = Session(engine)
 
     stations =  session.query(Station.station).all()
@@ -66,9 +69,11 @@ def stations():
 
 @app.route("/api/v1.0/tobs")
 def tobs():
+
     session = Session(engine)
 
     last_year = dt.date(2017, 8, 23) - dt.timedelta(days = 365)
+
     tobs =  session.query(Measurement.station, Measurement.tobs).filter(Measurement.station == "USC00519397").filter(Measurement.date >= last_year).all()
 
     session.close
@@ -80,6 +85,7 @@ def tobs():
 
 @app.route("/api/v1.0/<start>")
 def start(start):
+
     session = Session(engine)
 
     results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start, Measurement.station == "USC00519281").all()
@@ -99,6 +105,7 @@ def start_end(start, end):
     results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date > start, Measurement.date < end, Measurement.station == "USC00519281").all()
 
     session.close
+
     return jsonify(results)
 
 
